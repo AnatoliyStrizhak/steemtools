@@ -50,17 +50,16 @@ def getFromBittrex(coin):
 
 # https://api.hitbtc.com/?python#rest-api-reference
 def getFromHitBTC(coin):
-	try:
-		enabled=requests.get('https://api.hitbtc.com/api/2/public/currency/' + coin.upper()).json()
-		if enabled['payinEnabled']==false:
-		    return (0,0)
-		else:
-		    r = requests.get('https://api.hitbtc.com/api/2/public/ticker/' + coin.upper() + 'BTC').json()
-		    return (float(r['ask']), float(r['bid']))
-	except:
-		return (0,0)
-		
-
+    try:
+            enabled=requests.get('https://api.hitbtc.com/api/2/public/currency/' + coin.upper()).json()
+            
+            if enabled['payinEnabled']==True:
+                r = requests.get('https://api.hitbtc.com/api/2/public/ticker/' + coin.upper() + 'BTC').json()
+                return (float(r['ask']), float(r['bid']))
+            else:
+                return (0,0)
+    except:
+            return (0,0)
 
 # https://yobit.net/api/3/ticker/ltc_btc
 def getFromYobitBTC(coin):
