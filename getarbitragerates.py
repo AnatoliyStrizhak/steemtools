@@ -13,7 +13,7 @@ rj_bittrex=requests.get('https://bittrex.com/api/v1.1/public/getcurrencies').jso
 
 
 first_time = True
-EXCHANGES = ["Cryptopia", "Bittrex", "HitBTC", "Poloniex", "Binance", "YoBit"]
+EXCHANGES = ["Cryptopia", "Bittrex", "HitBTC", "Poloniex", "Binance", "YoBit", "Liqui"]
 
 # https://www.cryptopia.co.nz/Forum/Thread/255
 def getFromCryptopia(coin):
@@ -66,6 +66,15 @@ def getFromHitBTC(coin):
 def getFromYobitBTC(coin):
     try:
         r = scraper.get("https://yobit.net/api/3/ticker/"+ coin.lower() + "_btc").json()[coin.lower() + "_btc"]
+        return (float(r['sell']), float(r['buy']))
+    except:
+        return (0,0)
+
+
+# https://api.liqui.io/api/3/ticker/eth_btc
+def getFromLiquiBTC(coin):
+    try:
+        r = scraper.get("https://api.liqui.io/api/3/ticker/"+ coin.lower() + "_btc").json()[coin.lower() + "_btc"]
         return (float(r['sell']), float(r['buy']))
     except:
         return (0,0)
@@ -134,9 +143,10 @@ while True:
 	rpoloniex = getFromPoloniex(coin)
 	rbinance = getFromBinance(coin)
 	ryobit = getFromYobitBTC(coin)
+	rliqui = getFromLiquiBTC(coin)
 	
-	rasks = [rcryptopia[0], rbittrex[0], rhitbtc[0], rpoloniex[0], rbinance[0], ryobit[0]]
-	rbids = [rcryptopia[1], rbittrex[1], rhitbtc[1], rpoloniex[1], rbinance[1], ryobit[1]]
+	rasks = [rcryptopia[0], rbittrex[0], rhitbtc[0], rpoloniex[0], rbinance[0], ryobit[0], rliqui[0]]
+	rbids = [rcryptopia[1], rbittrex[1], rhitbtc[1], rpoloniex[1], rbinance[1], ryobit[1], rliqui[1]]
 	
 	now = datetime.datetime.now()
 	print(now.strftime("\nTime: %H:%M:%S"))
@@ -146,6 +156,7 @@ while True:
 	print('%10s: %s' % ('Poloniex', getAskAndBidStr(rpoloniex)))
 	print('%10s: %s' % ('Binance', getAskAndBidStr(rbinance)))
 	print('%10s: %s' % ('Yobit', getAskAndBidStr(ryobit)))
+	print('%10s: %s' % ('Liqui', getAskAndBidStr(rliqui)))
 	
 	lowestAsk, highestBid, lowestAskIndex, highestBidIndex = getBestRate(rasks, rbids)
 	if (lowestAskIndex != -1) and (highestBidIndex != -1):
