@@ -78,6 +78,14 @@ def getFromLiquiBTC(coin):
     except:
         return (0,0)
 
+# https://kuna.io/api/v2/tickers/eosbtc
+def getFromKunaBTC(coin):
+    try:
+        r = scraper.get("https://kuna.io/api/v2/tickers/"+ coin.lower() + "btc").json()["ticker"]
+        return (float(r['sell']), float(r['buy']))
+    except:
+        return (0,0)
+
 
 # https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md
 def getFromBinance(coin):
@@ -143,9 +151,10 @@ while True:
 	rbinance = getFromBinance(coin)
 	ryobit = getFromYobitBTC(coin)
 	rliqui = getFromLiquiBTC(coin)
+	rkuna = getFromKunaBTC(coin)
 	
-	rasks = [rcryptopia[0], rbittrex[0], rhitbtc[0], rpoloniex[0], rbinance[0], ryobit[0], rliqui[0]]
-	rbids = [rcryptopia[1], rbittrex[1], rhitbtc[1], rpoloniex[1], rbinance[1], ryobit[1], rliqui[1]]
+	rasks = [rcryptopia[0], rbittrex[0], rhitbtc[0], rpoloniex[0], rbinance[0], ryobit[0], rliqui[0], rkuna[0]]
+	rbids = [rcryptopia[1], rbittrex[1], rhitbtc[1], rpoloniex[1], rbinance[1], ryobit[1], rliqui[1], rkuna[1]]
 	
 	now = datetime.datetime.now()
 	print(now.strftime("\nTime: %H:%M:%S"))
@@ -156,6 +165,7 @@ while True:
 	print('%10s: %s' % ('Binance', getAskAndBidStr(rbinance)))
 	print('%10s: %s' % ('Yobit', getAskAndBidStr(ryobit)))
 	print('%10s: %s' % ('Liqui', getAskAndBidStr(rliqui)))
+	print('%10s: %s' % ('Kuna', getAskAndBidStr(rkuna)))
 	
 	lowestAsk, highestBid, lowestAskIndex, highestBidIndex = getBestRate(rasks, rbids)
 	if (lowestAskIndex != -1) and (highestBidIndex != -1):
